@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ScoreMapper">
+
+    <select id="selectScorePage" resultType="com.example.demo.entity.Score">
+        SELECT * FROM score
+        WHERE 1=1
+        <if test="studentId != null">
+            AND student_id = #{studentId}
+        </if>
+        <if test="courseId != null">
+            AND course_id = #{courseId}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND semester = #{semester}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByStudentId" resultType="com.example.demo.entity.Score">
+        SELECT * FROM score WHERE student_id = #{studentId}
+        ORDER BY semester DESC, course_id ASC
+    </select>
+
+    <select id="selectByCourseId" resultType="com.example.demo.entity.Score">
+        SELECT * FROM score WHERE course_id = #{courseId}
+        ORDER BY student_id ASC
+    </select>
+
+    <select id="selectStatistics" resultType="map">
+        SELECT
+            AVG(total_score) as avgScore,
+            MAX(total_score) as maxScore,
+            MIN(total_score) as minScore,
+            SUM(CASE WHEN total_score >= 60 THEN 1 ELSE 0 END) as passCount,
+            COUNT(*) as totalCount
+        FROM score
+        WHERE 1=1
+        <if test="courseId != null">
+            AND course_id = #{courseId}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND semester = #{semester}
+        </if>
+    </select>
+
+    <select id="selectScoreDistribution" resultType="map">
+        SELECT
+            CASE
+                WHEN total_score >= 90 THEN '优秀'
+                WHEN total_score >= 80 THEN '良好'
+                WHEN total_score >= 70 THEN '中等'
+                WHEN total_score >= 60 THEN '及格'
+                ELSE '不及格'
+            END as grade,
+            COUNT(*) as count
+        FROM score
+        WHERE 1=1
+        <if test="courseId != null">
+            AND course_id = #{courseId}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND semester = #{semester}
+        </if>
+        GROUP BY grade
+        ORDER BY
+            CASE grade
+                WHEN '优秀' THEN 1
+                WHEN '良好' THEN 2
+                WHEN '中等' THEN 3
+                WHEN '及格' THEN 4
+                WHEN '不及格' THEN 5
+            END
+    </select>
+
+</mapper>
