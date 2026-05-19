@@ -1,0 +1,1 @@
+import{m as r}from"./index-IBsamWpk.js";function o(){return r({url:"/courses",method:"get"})}function s(e){return r({url:"/courses",method:"post",data:e})}function n(e,t){return r({url:`/courses/${e}`,method:"put",data:t})}function c(e){return r({url:`/courses/${e}`,method:"delete"})}export{s as c,c as d,o as g,n as u};
